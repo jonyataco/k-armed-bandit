@@ -1,0 +1,10 @@
+For a = 1 to k:
+	q_table[a] = 0
+	q_table_freq[a] = 0
+
+Loop forever:
+	action = make_choice(epsilon)
+	reward = get_reward(action)
+	q_table_freq[a] = q_table_freq[a] + 1
+	q_table[a] = q_table[a] + ((1/q_table_freq[a]) * (reward - q_table[a]))
+
