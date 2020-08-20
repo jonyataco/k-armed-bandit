@@ -30,110 +30,41 @@ def get_action(epsi, table):
 def bandit(action, table, row):
     return table.values[row, action]
 
-#Importing the dataset using pandas
-dataset = pd.read_csv('Ads_Optimisation.csv')
-num_experiments = 100
-num_steps = len(dataset)
+if __name__ == "__main__":
+    #Importing the dataset using pandas
+    dataset = pd.read_csv('Ads_Optimisation.csv')
+    num_experiments = 100
+    num_steps = len(dataset)
 
-# Declaring the reward output for group of experiements
-# After each experiement, we will receive a total reward and we will
-# append it to this list
-rewards = []
+    # Declaring the reward output for group of experiements
+    # After each experiement, we will receive a total reward and we will
+    # append it to this list
+    rewards = []
 
-# Performs 5 different experiments and then plots the results of the experiment
+    # List of epsilon values.
+    epsilon_values = [.04, .08, .1, .5, 0]
 
-for i in range(num_experiments):
-    epsilon = .04
-    q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    total_reward = 0
-    for j in range(num_steps):
-        action = get_action(epsilon, q_table)
-        #doing minus one since the values are indexed from 0-9 rather than 1-10
-        reward = bandit(action - 1, dataset, j)
-        #Updating the frequency of the chosen action
-        q_table_freq[action] = q_table_freq[action] + 1
-        #Updating the value of the chosen action
-        q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
-        total_reward = total_reward + reward
-    rewards.append(total_reward)
-reward_average = sum(rewards) / len(rewards)
-
-rewards_2 = []
-for i in range(num_experiments):
-    epsilon = .08
-    q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    total_reward = 0
-    for j in range(num_steps):
-        action = get_action(epsilon, q_table)
-        #doing minus one since the values are indexed from 0-9 rather than 1-10
-        reward = bandit(action - 1, dataset, j)
-        #Updating the frequency of the chosen action
-        q_table_freq[action] = q_table_freq[action] + 1
-        #Updating the value of the chosen action
-        q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
-        total_reward = total_reward + reward
-    rewards_2.append(total_reward)
-reward_average_2 = sum(rewards_2) / len(rewards_2)
-
-rewards_3 = []
-for i in range(num_experiments):
-    epsilon = .1
-    q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    total_reward = 0
-    for j in range(num_steps):
-        action = get_action(epsilon, q_table)
-        #doing minus one since the values are indexed from 0-9 rather than 1-10
-        reward = bandit(action - 1, dataset, j)
-        #Updating the frequency of the chosen action
-        q_table_freq[action] = q_table_freq[action] + 1
-        #Updating the value of the chosen action
-        q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
-        total_reward = total_reward + reward
-    rewards_3.append(total_reward)
-reward_average_3 = sum(rewards_3) / len(rewards_3)
-
-rewards_4 = []
-for i in range(num_experiments):
-    epsilon = .5
-    q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    total_reward = 0
-    for j in range(num_steps):
-        action = get_action(epsilon, q_table)
-        #doing minus one since the values are indexed from 0-9 rather than 1-10
-        reward = bandit(action - 1, dataset, j)
-        #Updating the frequency of the chosen action
-        q_table_freq[action] = q_table_freq[action] + 1
-        #Updating the value of the chosen action
-        q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
-        total_reward = total_reward + reward
-    rewards_4.append(total_reward)
-reward_average_4 = sum(rewards_4) / len(rewards_4)
-
-rewards_5 = []
-for i in range(num_experiments):
-    epsilon = 0
-    q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    total_reward = 0
-    for j in range(num_steps):
-        action = get_action(epsilon, q_table)
-        #doing minus one since the values are indexed from 0-9 rather than 1-10
-        reward = bandit(action - 1, dataset, j)
-        #Updating the frequency of the chosen action
-        q_table_freq[action] = q_table_freq[action] + 1
-        #Updating the value of the chosen action
-        q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
-        total_reward = total_reward + reward
-    rewards_5.append(total_reward)
-reward_average_5 = sum(rewards_5) / len(rewards_5)
-
-
-
-plot_rewards = [reward_average, reward_average_2, reward_average_3, reward_average_4, reward_average_5]
+    # List of expriment rewards
+    plot_rewards = []
+   
+    for epsilon in epsilon_values: 
+        for i in range(num_experiments):
+            q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
+            q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
+            total_reward = 0
+            for j in range(num_steps):
+                action = get_action(epsilon, q_table)
+                #doing minus one since the values are indexed from 0-9 rather than 1-10
+                reward = bandit(action - 1, dataset, j)
+                #Updating the frequency of the chosen action
+                q_table_freq[action] = q_table_freq[action] + 1
+                #Updating the value of the chosen action
+                q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
+                total_reward = total_reward + reward
+            rewards.append(total_reward)
+        reward_average = sum(rewards) / len(rewards)
+        plot_rewards.append(reward_average)
+    
 print(plot_rewards)
 x = np.arange(5)
 plt.bar(x, plot_rewards)

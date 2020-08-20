@@ -43,73 +43,46 @@ def bandit(action):
     reward = np.random.normal(mean,sd)
     return reward
 
-# Going through the bandit algorithm for 2000 experiements with 1000 time steps
-num_experiments = 2000
-num_steps = 1000
+if __name__ == "__main__":
+    # Going through the bandit algorithm for 2000 experiements 
+    # with 1000 time steps
+    num_experiments = 2000
+    num_steps = 1000
 
-# Declaring the reward output for group of experiements with different e values
-rewards = np.zeros((num_steps,))
-rewards_2 = np.zeros((num_steps,))
-rewards_3 = np.zeros((num_steps,))
+    # Declaring the reward output for group of experiements 
+    # with different e values
+    reward_values = [np.zeros((num_steps,)), 
+                     np.zeros((num_steps,)), 
+                     np.zeros((num_steps,))]
 
-# epsilon = .1
-for i in range (num_experiments):
-    epsilon = .1
-    q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    experiment_rewards = []
-    for j in range(1, num_steps + 1):
-        action = get_action(epsilon, q_table)
-        reward = bandit(action)
-        experiment_rewards.append(reward)
-        #Updating the frequency of the chosen action
-        q_table_freq[action] = q_table_freq[action] + 1;
-        #Updating the value of the chosen action
-        q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
-    rewards += experiment_rewards
+    epsilon_values = [.1, .03, 0]
 
-reward_average = rewards / np.float(num_experiments)
-plt.plot(reward_average, "k.")
+    plot_flags = ["k.", "r.", "g."]
 
-# epsilon = .03
-for i in range (num_experiments):
-    epsilon = .03
-    q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    experiment_rewards = []
-    for j in range(1, num_steps + 1):
-        action = get_action(epsilon, q_table)
-        reward = bandit(action)
-        experiment_rewards.append(reward)
-        #Updating the frequency of the chosen action
-        q_table_freq[action] = q_table_freq[action] + 1;
-        #Updating the value of the chosen action
-        q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
-    rewards_2 += experiment_rewards
+    # Experiment loop
+    for (epsilon, reward_value, plt_flag) in zip(epsilon_values, reward_values, plot_flags):
+        for i in range (num_experiments):
+            q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
+            q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
+            experiment_rewards = []
+            for j in range(1, num_steps + 1):
+                action = get_action(epsilon, q_table)
+                reward = bandit(action)
+                experiment_rewards.append(reward)
+                #Updating the frequency of the chosen action
+                q_table_freq[action] = q_table_freq[action] + 1
+                #Updating the value of the chosen action
+                q_table[action] = (q_table[action] + 
+                                  ((1/q_table_freq[action]) * 
+                                  (reward - q_table[action])))
 
-reward_average = rewards_2 / np.float(num_experiments)
-plt.plot(reward_average, "r.")
+            reward_value += experiment_rewards
+        reward_average = reward_value / np.float(num_experiments)
+        plt.plot(reward_average, plt_flag)
 
-# epsilon = 0 or otherwise known as greedy
-for i in range (num_experiments):
-    epsilon = 0
-    q_table = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    q_table_freq = dict.fromkeys([1,2,3,4,5,6,7,8,9,10], 0)
-    experiment_rewards = []
-    for j in range(1, num_steps + 1):
-        action = get_action(epsilon, q_table)
-        reward = bandit(action)
-        experiment_rewards.append(reward)
-        #Updating the frequency of the chosen action
-        q_table_freq[action] = q_table_freq[action] + 1;
-        #Updating the value of the chosen action
-        q_table[action] = q_table[action] + ((1/q_table_freq[action]) * (reward - q_table[action]))
-    rewards_3 += experiment_rewards
 
-reward_average = rewards_3 / np.float(num_experiments)
-plt.plot(reward_average, "g.")
-plt.xlabel('Steps')
-plt.ylabel('Average reward')
-plt.grid()
-plt.xlim([1, num_steps])
-plt.show()
+    plt.xlabel('Steps')
+    plt.ylabel('Average reward')
+    plt.grid()
+    plt.xlim([1, num_steps])
+    plt.show()
